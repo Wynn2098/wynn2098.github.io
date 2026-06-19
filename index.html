@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cloudflare Security Lab - John Erwin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="background-glow"></div>
+
+<header class="topbar">
+
+  <div class="brand">
+    <h1>☁️ Cloudflare Security Lab by John Erwin</h1>
+    <p>Traffic Simulation • Security Analytics • Bot Management</p>
+  </div>
+
+  <div class="status-area">
+
+    <div class="status-card">
+      <span>System Status</span>
+      <strong id="systemStatus">Operational</strong>
+    </div>
+
+    <div class="status-card">
+      <span>Environment</span>
+      <strong>Simulation Mode</strong>
+    </div>
+
+  </div>
+
+</header>
+
+<main class="dashboard">
+
+  <!-- KPI CARDS -->
+
+  <section class="metrics-grid">
+
+    <div class="metric-card">
+      <span>Total Requests</span>
+      <h2 id="totalRequests">0</h2>
+    </div>
+
+    <div class="metric-card">
+      <span>Requests/sec</span>
+      <h2 id="rps">0</h2>
+    </div>
+
+    <div class="metric-card">
+      <span>Unique Visitors</span>
+      <h2 id="visitors">0</h2>
+    </div>
+
+    <div class="metric-card">
+      <span>Bot Score</span>
+      <h2 id="botScore">0%</h2>
+    </div>
+
+    <div class="metric-card">
+      <span>Cache Hit Ratio</span>
+      <h2 id="cacheHitRatio">0%</h2>
+    </div>
+
+    <div class="metric-card">
+      <span>WAF Events</span>
+      <h2 id="wafEvents">0</h2>
+    </div>
+
+    <div class="metric-card">
+      <span>Rate Limited</span>
+      <h2 id="rateLimited">0</h2>
+    </div>
+
+    <div class="metric-card">
+      <span>Threat Events</span>
+      <h2 id="threatEvents">0</h2>
+    </div>
+
+    <div class="metric-card">
+      <span>JA3 Fingerprints</span>
+      <h2 id="ja3Count">0</h2>
+    </div>
+
+    <div class="metric-card">
+      <span>JA4 Fingerprints</span>
+      <h2 id="ja4Count">0</h2>
+    </div>
+
+  </section>
+
+  <!-- MAIN DASHBOARD GRID -->
+
+  <section class="main-grid">
+
+    <!-- LIVE TRAFFIC CHART -->
+
+    <div class="card card-large">
+
+      <div class="card-header">
+        <h2>📊 Live Traffic Analytics</h2>
+      </div>
+
+      <canvas id="trafficChart"></canvas>
+
+    </div>
+
+    <!-- SECURITY EVENTS CHART -->
+
+    <div class="card card-large">
+
+      <div class="card-header">
+        <h2>🛡 Security Events</h2>
+      </div>
+
+      <canvas id="securityChart"></canvas>
+
+    </div>
+
+    <!-- TRAFFIC GENERATOR -->
+
+    <div class="card">
+
+      <div class="card-header">
+        <h2>🚀 Traffic Generator</h2>
+      </div>
+
+      <label>Traffic Amount</label>
+
+     <input type="number" id="trafficAmount" value="1" min="1" max="100" class="form-control text-center">
+
+      <button id="normalTrafficBtn">
+        Normal Traffic
+      </button>
+
+      <button id="trafficSpikeBtn">
+        Traffic Spike
+      </button>
+
+      <button id="botTrafficBtn">
+        Bot Traffic
+      </button>
+
+    </div>
+
+    <!-- TRAFFIC PROFILES -->
+
+    <div class="card">
+
+      <div class="card-header">
+        <h2>🌐 Traffic Profiles</h2>
+      </div>
+
+      <button data-profile="chrome_windows">
+        Chrome Windows
+      </button>
+
+      <button data-profile="chrome_mac">
+        Chrome Mac
+      </button>
+
+      <button data-profile="safari_ios">
+        Safari iPhone
+      </button>
+
+      <button data-profile="android">
+        Android Device
+      </button>
+
+      <button data-profile="bot">
+        Bot Profile
+      </button>
+
+    </div>
+
+    <!-- ATTACK SIMULATOR -->
+
+    <div class="card">
+
+      <div class="card-header">
+        <h2>🔥 Attack Simulator</h2>
+      </div>
+
+      <button data-attack="ddos">
+        DDoS Attack
+      </button>
+
+      <button data-attack="credential">
+        Credential Stuffing
+      </button>
+
+      <button data-attack="sqli">
+        SQL Injection
+      </button>
+
+      <button data-attack="xss">
+        Cross Site Scripting
+      </button>
+
+      <button data-attack="scraper">
+        Scraper Bot
+      </button>
+
+      <button data-attack="api">
+        API Abuse
+      </button>
+
+    </div>
+
+    <!-- SECURITY TESTING -->
+
+    <div class="card">
+
+      <div class="card-header">
+        <h2>🧪 Security Testing</h2>
+      </div>
+
+      <button id="wafTestBtn">
+        WAF Test
+      </button>
+
+      <button id="rateLimitBtn">
+        Rate Limit Test
+      </button>
+
+      <button id="loginAttackBtn">
+        Login Attack Test
+      </button>
+
+      <button id="cacheTestBtn">
+        Cache Test
+      </button>
+
+      <button id="errorTestBtn">
+        404 Test
+      </button>
+
+    </div>
+
+    <!-- STATUS CODES -->
+
+    <div class="card">
+
+      <div class="card-header">
+        <h2>📡 Edge Status Simulator</h2>
+      </div>
+
+      <div class="status-grid">
+
+        <button data-status="200">200 OK</button>
+        <button data-status="201">201 Created</button>
+        <button data-status="202">202 Accepted</button>
+
+        <button data-status="301">301 Redirect</button>
+        <button data-status="302">302 Found</button>
+
+        <button data-status="403">403 Forbidden</button>
+        <button data-status="404">404 Not Found</button>
+        <button data-status="410">410 Gone</button>
+
+        <button data-status="429">429 Rate Limited</button>
+
+        <button data-status="500">500 Error</button>
+        <button data-status="502">502 Gateway</button>
+        <button data-status="503">503 Unavailable</button>
+
+      </div>
+
+    </div>
+
+    <!-- COUNTRY ANALYTICS -->
+
+    <div class="card">
+
+      <div class="card-header">
+        <h2>🌎 Country Analytics</h2>
+      </div>
+
+      <div id="countryAnalytics">
+
+        <div class="country-row">
+          <span>🇺🇸 United States</span>
+          <span id="countryUS">0</span>
+        </div>
+
+        <div class="country-row">
+          <span>🇩🇪 Germany</span>
+          <span id="countryDE">0</span>
+        </div>
+
+        <div class="country-row">
+          <span>🇯🇵 Japan</span>
+          <span id="countryJP">0</span>
+        </div>
+
+        <div class="country-row">
+          <span>🇸🇬 Singapore</span>
+          <span id="countrySG">0</span>
+        </div>
+
+        <div class="country-row">
+          <span>🇵🇭 Philippines</span>
+          <span id="countryPH">0</span>
+        </div>
+
+        <div class="country-row">
+          <span>🇧🇷 Brazil</span>
+          <span id="countryBR">0</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TLS ANALYTICS -->
+
+    <div class="card">
+
+      <div class="card-header">
+        <h2>🔐 TLS Fingerprints</h2>
+      </div>
+
+      <div class="tls-grid">
+
+        <div class="tls-box">
+          <label>JA3 Fingerprints</label>
+          <h3 id="tlsJa3">0</h3>
+        </div>
+
+        <div class="tls-box">
+          <label>JA4 Fingerprints</label>
+          <h3 id="tlsJa4">0</h3>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- LIVE COUNTER -->
+
+    <div class="card">
+
+      <div class="card-header">
+        <h2>⚡ Live Counter</h2>
+      </div>
+
+      <div id="liveCounter">
+        0
+      </div>
+
+    </div>
+
+    <!-- BOT MANAGEMENT -->
+
+    <div class="card">
+
+      <div class="card-header">
+        <h2>🤖 Bot Management</h2>
+      </div>
+
+      <button id="allowBotsBtn">
+        Allow Bots
+      </button>
+
+      <button id="challengeBotsBtn">
+        Managed Challenge
+      </button>
+
+      <button id="blockBotsBtn">
+        Block Bots
+      </button>
+
+      <button id="verifiedBotBtn">
+        Verified Bot
+      </button>
+
+    </div>
+
+    <!-- CACHE ANALYTICS -->
+
+    <div class="card">
+
+      <div class="card-header">
+        <h2>⚙ Cache Analytics</h2>
+      </div>
+
+      <div class="cache-stats">
+
+        <div>
+          Cache Hits:
+          <span id="cacheHits">0</span>
+        </div>
+
+        <div>
+          Cache Misses:
+          <span id="cacheMisses">0</span>
+        </div>
+
+        <div>
+          HIT Ratio:
+          <span id="cacheRatio">0%</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ACTIVITY LOG -->
+
+    <div class="card card-full">
+
+      <div class="card-header">
+        <h2>📜 Activity Log</h2>
+      </div>
+
+      <div id="activityLog">
+
+        <div class="log-entry">
+          Cloudflare Security Lab Initialized...
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+
+  <p>
+    Cloudflare Security Lab Simulator v1.0
+  </p>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
